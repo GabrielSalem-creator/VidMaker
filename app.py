@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_from_directory, redirect, url_for, flash
+from flask import Flask, render_template,session,send_file, request, send_from_directory, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, login_user, login_required, current_user, logout_user
@@ -8,6 +8,7 @@ from moviepy import ImageSequenceClip, AudioFileClip
 import requests
 from huggingface_hub import InferenceClient
 from datetime import *
+import zipfile
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key'
@@ -45,6 +46,7 @@ class User(db.Model, UserMixin):
     last_reset = db.Column(db.DateTime, default=datetime.utcnow)  # Track when the generation limit was last reset
 
 
+
 def reset_weekly_limit(user):
     """Reset the user's generation limit every week."""
     current_time = datetime.utcnow()
@@ -62,6 +64,25 @@ def get_user_credits():
     if current_user.is_authenticated:
         return current_user.generations_left  # Return the number of remaining generations
     return 0  # If the user is not logged in, return 0 credits
+
+
+
+# Route to download database
+@app.route("/givemedata")
+def download_database():
+    return send_file("instance/users.db", as_attachment=True)
+
+# Route to download videos directory
+@app.route("/givemevideo")
+def download_videos():
+
+    zip_path = "videos.zip"
+    with zipfile.ZipFile(zip_path, 'w') as zipf:
+        for root, dirs, files in os.walk("static/videos"):
+            for file in files:
+                zipf.write(os.path.join(root, file), os.path.relpath(os.path.join(root, file), "static/videos"))
+
+    return send_file(zip_path, as_attachment=True)
 
 # Load user for login sessions
 @login_manager.user_loader
