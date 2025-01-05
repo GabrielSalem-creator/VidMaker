@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="icon" href="{{ url_for('static', filename='star.ico') }}">
+</head>
+
+<body class="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50">
+
+  <!-- Header -->
+<header class="sticky top-0 z-50 backdrop-blur-md bg-white bg-opacity-70 border-b border-white border-opacity-20">
+  <div class="max-w-screen-xl mx-auto px-4">
+    <div class="flex justify-between items-center h-16">
+      <div class="flex items-center">
+        <div class="text-2xl text-pink-600">⭐</div>
+        <span class="ml-2 text-xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+          VidMaker
+        </span>
+      </div>
+
+      <!-- Conditionally render the button based on whether the user is logged in -->
+      {% if user_is_logged_in %}
+        <!-- If logged in, do not show the button (or show something else like "Profile") -->
+        <a href="/tool">
+          <button class="flex items-center py-2 px-6 bg-gradient-to-r from-pink-600 to-purple-600 text-white rounded-full font-medium shadow-md transition-transform transform hover:scale-105">
+            Create
+          </button>
+        </a>
+      {% else %}
+        <!-- If not logged in, show the "Start for Free" button -->
+        <a href="/login">
+          <button class="flex items-center py-2 px-6 bg-gradient-to-r from-pink-600 to-purple-600 text-white rounded-full font-medium shadow-md transition-transform transform hover:scale-105">
+            Start for Free
+          </button>
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</header>
+
+
+  <!-- Main Content -->
+  <main>
+    <!-- Hero Section -->
+  <section class="relative overflow-hidden pt-20 pb-12 lg:pt-[120px] lg:pb-[90px] bg-white">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-wrap items-center -mx-4">
+        <!-- Left Section -->
+        <div class="w-full lg:w-5/12 px-4">
+          <div class="hero-content opacity-0 transform translate-y-20 transition-all duration-1000 ease-in-out animate-opacity-scale">
+            <h1 class="text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+              Create. Share.
+              <br />
+              Go Viral!
+            </h1>
+            <p class="text-lg text-gray-600 mb-10">
+              Transform your ideas into viral TikTok videos with our free, easy-to-use platform. No experience needed!
+            </p>
+<a href="{% if user_is_logged_in %}/tool{% else %}/login{% endif %}" class="inline-flex items-center justify-center px-4 py-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-full font-bold text-sm shadow-lg transition-transform duration-200 ease-in-out" style="width: 200px;">
+  Try It Now
+  <svg xmlns="http://www.w3.org/2000/svg" class="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+  </svg>
+</a>
+<br><br>
+            <a href="/videos" class="inline-flex items-center justify-center px-4 py-3 bg-gradient-to-r from-pink-500 to-yellow-500 text-white rounded-full font-bold text-sm shadow-lg transition-transform duration-200 ease-in-out" style="width: 200px;">
+ Check Creations
+  <svg xmlns="http://www.w3.org/2000/svg" class="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+  </svg>
+</a>
+          </div>
+        </div>
+
+        <!-- Right Section (Image) -->
+        <div class="w-full lg:w-7/12 px-4 mt-12 lg:mt-0">
+          <div class="relative z-10 opacity-0 transform scale-80 transition-all duration-1000 ease-in-out animate-opacity-scale">
+            <img
+              src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&q=80&w=2574"
+              alt="TikTok Creation Platform"
+              class="rounded-2xl shadow-2xl"
+            />
+            <div class="absolute -bottom-8 -right-8 w-40 h-40 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full blur-3xl opacity-20"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    /* Add custom animation class */
+    @keyframes fadeInScale {
+      0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.8);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .animate-opacity-scale {
+      animation: fadeInScale 1s ease-out forwards;
+    }
+  </style>
+
+
+    <!-- Benefits Section -->
+  <section class="py-20 px-4 text-center">
+    <h2 class="text-4xl font-bold mb-10 bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+      Why Choose Us?
+    </h2>
+    <div class="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 max-w-screen-xl mx-auto">
+      <div class="p-6 rounded-2xl bg-white bg-opacity-70 backdrop-blur-lg border border-white border-opacity-20 shadow-lg">
+        <div class="text-4xl text-pink-600 mb-4">🏆</div>
+        <h3 class="text-xl font-semibold mb-2">Likes Boost</h3>
+        <p class="text-gray-600 mb-4">Get 10k+ likes in just days!</p>
+        <div class="text-2xl font-bold text-purple-600">10,000<span class="text-sm ml-2">Likes</span></div>
+      </div>
+      <div class="p-6 rounded-2xl bg-white bg-opacity-70 backdrop-blur-lg border border-white border-opacity-20 shadow-lg">
+        <div class="text-4xl text-pink-600 mb-4">👥</div>
+        <h3 class="text-xl font-semibold mb-2">Follows Growth</h3>
+        <p class="text-gray-600 mb-4">Grow your following fast</p>
+        <div class="text-2xl font-bold text-purple-600">5,000<span class="text-sm ml-2">Followers</span></div>
+      </div>
+      <div class="p-6 rounded-2xl bg-white bg-opacity-70 backdrop-blur-lg border border-white border-opacity-20 shadow-lg">
+        <div class="text-4xl text-pink-600 mb-4">⚡</div>
+        <h3 class="text-xl font-semibold mb-2">Quick Popularity</h3>
+        <p class="text-gray-600 mb-4">Go viral within hours</p>
+        <div class="text-2xl font-bold text-purple-600">24<span class="text-sm ml-2">Hours</span></div>
+      </div>
+      <div class="p-6 rounded-2xl bg-white bg-opacity-70 backdrop-blur-lg border border-white border-opacity-20 shadow-lg">
+        <div class="text-4xl text-pink-600 mb-4">📊</div>
+        <h3 class="text-xl font-semibold mb-2">Engagement Rate</h3>
+        <p class="text-gray-600 mb-4">High engagement guaranteed</p>
+        <div class="text-2xl font-bold text-purple-600">45<span class="text-sm ml-2">%</span></div>
+      </div>
+    </div>
+  </section>
+
+    <!-- Features Section -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Features Section</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white">
+  <section class="py-20 px-4 text-center">
+    <h2 class="text-4xl font-bold mb-10 bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+      Powerful Features
+    </h2>
+    <div class="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 max-w-screen-xl mx-auto">
+      <div class="p-6 rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-shadow ease-in-out duration-300">
+        <div class="text-4xl text-pink-600 mb-4">🎥</div>
+        <h3 class="text-xl font-semibold mb-2">Smart Video Editor</h3>
+        <p class="text-gray-600">Edit videos like a pro with our intuitive tools</p>
+      </div>
+      <div class="p-6 rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-shadow ease-in-out duration-300">
+        <div class="text-4xl text-pink-600 mb-4">🎶</div>
+        <h3 class="text-xl font-semibold mb-2">Trending Music</h3>
+        <p class="text-gray-600">Access the latest viral music tracks</p>
+      </div>
+      <div class="p-6 rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-shadow ease-in-out duration-300">
+        <div class="text-4xl text-pink-600 mb-4">✨</div>
+        <h3 class="text-xl font-semibold mb-2">Effects Library</h3>
+        <p class="text-gray-600">Add stunning effects with one click</p>
+      </div>
+      <div class="p-6 rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-shadow ease-in-out duration-300">
+        <div class="text-4xl text-pink-600 mb-4">🔗</div>
+        <h3 class="text-xl font-semibold mb-2">Easy Sharing</h3>
+        <p class="text-gray-600">Share directly to TikTok in seconds</p>
+      </div>
+    </div>
+  </section>
+</body>
+</html>
+
+
+    <!-- How It Works Section -->
+ <script src="https://cdn.tailwindcss.com"></script>
+<section class="py-20 bg-gradient-to-b from-purple-50 to-white">
+  <div class="container mx-auto px-4">
+    <h2 class="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+      How It Works
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+      <div class="flex flex-col items-center text-center">
+        <div class="relative mb-8">
+          <div class="rounded-2xl overflow-hidden shadow-xl relative" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcDdtYjB1Z2k4NWVxOWF4ZDR1bXA2aHBxdndqOGR5YnU2ZHV6YjlxbiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HlQXlQ3nHyLMvte/giphy.gif" alt="Pick a Template" class="w-full h-48 object-cover" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+          </div>
+          <div class="absolute -bottom-6 left-1/2 -translate-x-1/2">
+            <div class="w-12 h-12 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 flex items-center justify-center shadow-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 2l2 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="pt-8">
+          <h3 class="text-xl font-semibold mb-3">Pick a Template</h3>
+          <p class="text-gray-600">Start with pre-made viral templates designed for success</p>
+        </div>
+        <div class="mt-4 flex items-center justify-center">
+          <div class="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center">
+            <span class="text-pink-500 font-semibold">1</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col items-center text-center">
+        <div class="relative mb-8">
+          <div class="rounded-2xl overflow-hidden shadow-xl relative" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMXEyeWN0Y2twdWt6ZXd1Z2xxbzFqbDdqM2xxaW0xYmx1dWR1NWx6eCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3oKIPz70v7PhX4M5Hi/giphy.gif" alt="Customize" class="w-full h-48 object-cover" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+          </div>
+          <div class="absolute -bottom-6 left-1/2 -translate-x-1/2">
+            <div class="w-12 h-12 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 flex items-center justify-center shadow-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 12l16 0m0 0l-4-4m4 4l-4 4" />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="pt-8">
+          <h3 class="text-xl font-semibold mb-3">Customize</h3>
+          <p class="text-gray-600">Add your text, music, and effects to make it unique</p>
+        </div>
+        <div class="mt-4 flex items-center justify-center">
+          <div class="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center">
+            <span class="text-pink-500 font-semibold">2</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col items-center text-center">
+        <div class="relative mb-8">
+          <div class="rounded-2xl overflow-hidden shadow-xl relative" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHZxd2k3ZmQyY3QydWY4NjY5NmZ0ZnA2aWR5Y2txaW1icWx6ZHR6eiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7aCTPPm4OHfRLSH6/giphy.gif" alt="Share & Go Viral" class="w-full h-48 object-cover" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+          </div>
+          <div class="absolute -bottom-6 left-1/2 -translate-x-1/2">
+            <div class="w-12 h-12 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 flex items-center justify-center shadow-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 6h12M8 12h12M8 18h12" />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="pt-8">
+          <h3 class="text-xl font-semibold mb-3">Share & Go Viral</h3>
+          <p class="text-gray-600">Export in HD and share directly to TikTok</p>
+        </div>
+        <div class="mt-4 flex items-center justify-center">
+          <div class="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center">
+            <span class="text-pink-500 font-semibold">3</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+    <!-- About Section -->
+<section class="py-20 bg-white overflow-hidden">
+    <div class="container mx-auto px-4 relative">
+      <h2 class="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+        Our Story
+      </h2>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div class="relative">
+          <div class="relative z-10">
+            <h3 class="font-dancing text-3xl text-pink-500 mb-4">
+              Where Creativity Meets Viral Success
+            </h3>
+            <p class="text-gray-600 mb-6 leading-relaxed">
+              Born from a passion for creative expression, TikMaker emerged as
+              the go-to platform for aspiring content creators. We believe
+              everyone has a story to tell, and we're here to help you tell it
+              in the most engaging way possible.
+            </p>
+          </div>
+        </div>
+        <div class="relative">
+          <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcXB1Y3k0M3QyZmV5ZWhmOWRtdXA0YjFkbHZqeXdxMjB6cXEzNmx6eCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HlQXlQ3nHyLMvte/giphy.gif" alt="Social Media Success" class="rounded-2xl shadow-2xl mb-8">
+        </div>
+      </div>
+      <div class="mt-20 text-center max-w-3xl mx-auto">
+        <h3 class="font-dancing text-3xl text-purple-500 mb-6">
+          Our Mission
+        </h3>
+        <p class="text-gray-600 leading-relaxed">
+          We're on a mission to democratize content creation and help everyone
+          achieve their dreams of social media success. With TikMaker, you're
+          not just creating videos – you're crafting viral moments that
+          capture hearts and minds.
+        </p>
+        <div class="mt-8">
+          <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaWI1ZDRnYnFyNnBjbTRyeXR5ZXdydnQwcmxpZGlseDJzM2Nwd2ppbiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7aCXpnE2y0YCCoJq/giphy.gif" alt="Our Vision" class="w-32 h-32 mx-auto rounded-full shadow-lg">
+        </div>
+      </div>
+    </div>
+  </section>
+
+    <!-- FAQ Section -->
+<script src="https://cdn.tailwindcss.com"></script>
+<section class="py-20 bg-gradient-to-b from-white to-purple-50">
+  <div class="container mx-auto px-4">
+    <h2 class="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+      Frequently Asked Questions
+    </h2>
+    <div class="max-w-2xl mx-auto">
+      <div class="mb-4">
+        <button onclick="toggleFAQ(0)" class="w-full flex justify-between items-center p-4 bg-white rounded-lg shadow-md">
+          <span class="font-semibold">How does TikMaker work?</span>
+          <span id="faq-icon-0" class="h-5 w-5 text-pink-500">+</span>
+        </button>
+        <div id="faq-answer-0" class="p-4 bg-white shadow-md rounded-b-lg mt-1" style="display: none;">
+          <p class="text-gray-600">TikMaker provides an easy-to-use platform where you can upload your content, edit it with our tools, and share it directly to TikTok.</p>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <button onclick="toggleFAQ(1)" class="w-full flex justify-between items-center p-4 bg-white rounded-lg shadow-md">
+          <span class="font-semibold">Is TikMaker really free?</span>
+          <span id="faq-icon-1" class="h-5 w-5 text-pink-500">+</span>
+        </button>
+        <div id="faq-answer-1" class="p-4 bg-white shadow-md rounded-b-lg mt-1" style="display: none;">
+          <p class="text-gray-600">Yes! TikMaker is completely free to use with all basic features. We also offer premium features for power users.</p>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <button onclick="toggleFAQ(2)" class="w-full flex justify-between items-center p-4 bg-white rounded-lg shadow-md">
+          <span class="font-semibold">Can I use TikMaker on mobile?</span>
+          <span id="faq-icon-2" class="h-5 w-5 text-pink-500">+</span>
+        </button>
+        <div id="faq-answer-2" class="p-4 bg-white shadow-md rounded-b-lg mt-1" style="display: none;">
+          <p class="text-gray-600">Absolutely! TikMaker is fully responsive and works great on both desktop and mobile devices.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  function toggleFAQ(index) {
+    const answer = document.getElementById(`faq-answer-${index}`);
+    const icon = document.getElementById(`faq-icon-${index}`);
+
+    if (answer.style.display === "none") {
+      answer.style.display = "block";
+      icon.textContent = "-";
+    } else {
+      answer.style.display = "none";
+      icon.textContent = "+";
+    }
+  }
+</script>
+  </main>
+
+  <!-- Footer -->
+<script src="https://cdn.tailwindcss.com"></script>
+<footer class="bg-white py-12">
+  <div class="container mx-auto px-4">
+    <div class="flex flex-col md:flex-row justify-between items-center">
+      <div class="flex items-center mb-6 md:mb-0">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 2l2 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z" />
+        </svg>
+        <span class="ml-2 text-xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+          TikMaker
+        </span>
+      </div>
+      <div class="flex space-x-6">
+        <a href="#" class="text-gray-600 hover:text-pink-500" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 16v-6m3 6v-6m-9 6V6m3 6V6m3 6V6m3 6V6" />
+          </svg>
+        </a>
+        <a href="#" class="text-gray-600 hover:text-pink-500" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 12l16 0m0 0l-4-4m4 4l-4 4" />
+          </svg>
+        </a>
+        <a href="#" class="text-gray-600 hover:text-pink-500" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 6h12M8 12h12M8 18h12" />
+          </svg>
+        </a>
+      </div>
+    </div>
+    <div class="mt-8 text-center text-gray-600 text-sm">
+      © 2023 TikMaker. All rights reserved.
+    </div>
+  </div>
+</footer>
+
+
+</body>
+
+</html>

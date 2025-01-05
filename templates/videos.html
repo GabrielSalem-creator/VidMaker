@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="icon" href="{{ url_for('static', filename='star.ico') }}">
+</head>
+<body class="bg-white text-gray-800 font-sans">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-pink-500 to-purple-500 text-white text-center py-4 shadow-lg relative">
+        <a href="/" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-pink-500 to-purple-500 text-white px-4 py-2 rounded-lg font-bold text-sm hover:from-purple-500 hover:to-pink-500 transition">
+            <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <h1 class="text-2xl font-bold">TikMaker</h1>
+        <a href="/logout" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-white font-medium text-sm">
+            Log Out
+        </a>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex flex-col items-center px-4 py-8 space-y-8">
+        <div class="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Loop through videos -->
+            {% for video in videos %}
+            <div class="bg-pink-100 rounded-lg shadow-lg p-4">
+                <video controls class="w-full rounded-lg shadow-md">
+                    <source src="{{ video.path }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="mt-4">
+                    <p class="text-sm text-gray-700">Created on:
+                        <span class="font-semibold">{{ video.created_on }}</span>
+                    </p>
+                    <a href="{{ video.path }}" download
+                        class="block w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-2 px-4 rounded-lg font-semibold text-center text-lg hover:from-pink-500 hover:to-purple-500 transition mt-2">
+                        Download Video
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white py-6">
+        <div class="container mx-auto px-4">
+            <div class="text-center text-gray-600 text-sm">
+                &copy; 2025 TikMaker. All rights reserved.
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

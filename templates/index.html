@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.7.0/dist/vanilla-tilt.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/framer-motion@10.0.0/dist/framer-motion.umd.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="icon" href="{{ url_for('static', filename='star.ico') }}">
+    <style>
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        #loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .disabled-button {
+            background: #d1d5db;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-800 font-sans">
+    <!-- Loading Spinner -->
+    <div id="loading-overlay">
+        <div id="loading-spinner"></div>
+    </div>
+
+    <!-- Header -->
+<header class="bg-gradient-to-r from-pink-500 to-purple-500 text-white text-center py-4 shadow-lg relative">
+    <a href="/" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-pink-500 to-purple-500 text-white px-4 py-2 rounded-lg font-bold text-sm hover:from-purple-500 hover:to-pink-500 transition">
+        <i class="fa-solid fa-arrow-left"></i>
+    </a>
+    <h1 class="text-3xl font-extrabold">TikMaker</h1>
+
+    <div class="flex justify-center space-x-4 mt-2">
+        <a href="/videos" class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-pink-500 to-yellow-500 text-white rounded-full font-bold text-sm shadow-lg transition-transform duration-200 ease-in-out hover:scale-105">
+            Check Creations
+            <svg xmlns="http://www.w3.org/2000/svg" class="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+            </svg>
+        </a>
+    </div>
+
+    <a href="/logout" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-white font-medium text-sm hover:underline">
+        Log Out
+    </a>
+</header>
+
+    <!-- Main Content -->
+    <main class="flex flex-col items-center px-4 py-8 space-y-8">
+        <div class="flex flex-col lg:flex-row lg:space-x-8 space-y-8 lg:space-y-0 w-full max-w-1/2">
+            <!-- Form -->
+            <form action="/tool" method="POST" class="bg-pink-50 rounded-lg shadow-lg p-6 flex-1" onsubmit="showLoadingSpinner()">
+                <label for="story" class="block text-lg font-semibold mb-2 flex justify-center font-semibold">Describe your story</label>
+                <textarea id="story" name="story" rows="17" maxlength="650" required class="w-full p-3 border border-pink-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"></textarea>
+                <p id="char-counter" class="text-sm text-gray-600 mt-2">0/650 characters</p>
+
+                <label for="voice" class="block text-lg font-semibold mt-4">Choose a Voice:</label>
+                <select id="voice" name="voice" required class="w-full p-3 border border-pink-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500" onchange="playVoice()">
+                    <option value="s3://voice-cloning-zero-shot/baf1ef41-36b6-428c-9bdf-50ba54682bd8/original/manifest.json" data-audio-url="s3://voice-cloning-zero-shot/baf1ef41-36b6-428c-9bdf-50ba54682bd8/original/audio.wav">Original</option>
+                    <option value="s3://voice-cloning-zero-shot/d82d246c-148b-457f-9668-37b789520891/adolfosaad/manifest.json" data-audio-url="https://parrot-samples.s3.amazonaws.com/kettle/adolfo.wav">Adolfo</option>
+                    <option value="s3://voice-cloning-zero-shot/a59cb96d-bba8-4e24-81f2-e60b888a0275/charlottenarrativesaad/manifest.json" data-audio-url="https://parrot-samples.s3.amazonaws.com/kettle/charlotte+(narrative).wav">Charlotte</option>
+                    <option value="s3://voice-cloning-zero-shot/f6594c50-e59b-492c-bac2-047d57f8bdd8/susanadvertisingsaad/manifest.json" data-audio-url="https://parrot-samples.s3.amazonaws.com/kettle/susan+(advertising).wav">Susan</option>
+                    <option value="s3://voice-cloning-zero-shot/9fc626dc-f6df-4f47-a112-39461e8066aa/oliviaadvertisingsaad/manifest.json" data-audio-url="https://parrot-samples.s3.amazonaws.com/kettle/olivia+advertising.wav">Olivia</option>
+                    <option value="s3://voice-cloning-zero-shot/1afba232-fae0-4b69-9675-7f1aac69349f/delilahsaad/manifest.json" data-audio-url="https://peregrine-results.s3.amazonaws.com/UlI3kAAfgCOJNP2OMe.mp3">Delilah</option>
+                    <option value="s3://voice-cloning-zero-shot/9f1ee23a-9108-4538-90be-8e62efc195b6/charlessaad/manifest.json" data-audio-url="https://parrot-samples.s3.amazonaws.com/kettle/charles.wav">Charles</option>
+                </select>
+
+                <audio id="voicePlayer" controls style="display:none;">
+                    <source id="voiceSource" src="" type="audio/wav">
+                    Your browser does not support the audio element.
+                </audio>
+
+                <!-- Generation Credits Display -->
+                <div class="mt-4 flex items-center justify-between">
+                    <p class="text-lg font-semibold">Generations Left: <span id="credits-count" class="text-red-500">{{ credits_left }}</span></p>
+                </div>
+
+                <button type="submit" id="generate-button" class="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white py-2 px-4 rounded-lg font-semibold text-lg hover:from-purple-500 hover:to-pink-500 transition mt-4">
+                    Generate Video
+                </button>
+            </form>
+
+            <!-- Video Display -->
+            <div class="bg-pink-100 rounded-lg shadow-lg p-6 flex-1 w-full max-w-1/2">
+                <h2 class="text-xl font-semibold text-gray-700 mb-4">Your Generated Video</h2>
+                <video controls class="w-full rounded-lg shadow-md">
+                    <source src="{{ video_path }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <!-- Export Button -->
+                <button class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-2 px-4 rounded-lg font-semibold text-lg hover:from-pink-500 hover:to-purple-500 transition mt-4">
+                    Export Video
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white py-5">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center mb-6 md:mb-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 2l2 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z" />
+                    </svg>
+                    <span class="ml-2 text-xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+                        TikMaker
+                    </span>
+                </div>
+            </div>
+            <div class="mt-8 text-center text-gray-600 text-sm">
+                © 2023 TikMaker. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+<script>
+    const textarea = document.getElementById('story');
+    const charCounter = document.getElementById('char-counter');
+    const generateButton = document.getElementById('generate-button');
+    const creditsCount = document.getElementById('credits-count');
+
+    let creditsLeft = {{ credits_left }}; // Dynamic value passed from Flask
+
+    textarea.addEventListener('input', () => {
+        charCounter.textContent = `${textarea.value.length}/650 characters`;
+    });
+
+    function showLoadingSpinner() {
+        document.getElementById('loading-overlay').style.display = 'flex';
+    }
+
+    function playVoice() {
+        const selectedVoice = document.getElementById('voice').selectedOptions[0];
+        const audioUrl = selectedVoice.getAttribute('data-audio-url');
+        const voicePlayer = document.getElementById('voicePlayer');
+        const voiceSource = document.getElementById('voiceSource');
+
+        voiceSource.src = audioUrl;
+        voicePlayer.load();
+        voicePlayer.play();
+    }
+
+    // Update the credit count dynamically
+    function updateCredits() {
+        creditsCount.textContent = creditsLeft;
+    }
+
+    // Example function that reduces credits when video is generated (call this from your backend after generation)
+    function reduceCredits() {
+        if (creditsLeft > 0) {
+            creditsLeft--;
+            updateCredits();
+        }
+    }
+</script>
+</body>
+</html>
