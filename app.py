@@ -41,7 +41,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(128), nullable=False)
     ip_address = db.Column(db.String(45), nullable=False)
 
-    generations_left = db.Column(db.Integer, default=5)  # Store the number of generations left
+    generations_left = db.Column(db.Integer, default=3)  # Store the number of generations left
     last_reset = db.Column(db.DateTime, default=datetime.utcnow)  # Track when the generation limit was last reset
 
 
@@ -52,7 +52,7 @@ def reset_weekly_limit(user):
 
     # If more than a week has passed since the last reset, reset the generation count
     if time_difference >= timedelta(weeks=1):
-        user.generations_left = 5  # Reset the counter to 10
+        user.generations_left = 3  # Reset the counter to 10
         user.last_reset = current_time  # Update the last reset time
         db.session.commit()
 

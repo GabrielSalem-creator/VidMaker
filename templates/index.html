@@ -77,8 +77,8 @@
             <!-- Form -->
             <form action="/tool" method="POST" class="bg-pink-50 rounded-lg shadow-lg p-6 flex-1" onsubmit="showLoadingSpinner()">
                 <label for="story" class="block text-lg font-semibold mb-2 flex justify-center font-semibold">Describe your story</label>
-                <textarea id="story" name="story" rows="17" maxlength="650" required class="w-full p-3 border border-pink-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"></textarea>
-                <p id="char-counter" class="text-sm text-gray-600 mt-2">0/650 characters</p>
+                <textarea id="story" name="story" rows="17" maxlength="1000" required class="w-full p-3 border border-pink-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"></textarea>
+                <p id="char-counter" class="text-sm text-gray-600 mt-2">0/1000 characters</p>
 
                 <label for="voice" class="block text-lg font-semibold mt-4">Choose a Voice:</label>
                 <select id="voice" name="voice" required class="w-full p-3 border border-pink-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500" onchange="playVoice()">
@@ -149,7 +149,7 @@
     let creditsLeft = {{ credits_left }}; // Dynamic value passed from Flask
 
     textarea.addEventListener('input', () => {
-        charCounter.textContent = `${textarea.value.length}/650 characters`;
+        charCounter.textContent = `${textarea.value.length}/1000 characters`;
     });
 
     function showLoadingSpinner() {
