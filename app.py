@@ -9,6 +9,9 @@ import requests
 from huggingface_hub import InferenceClient
 from datetime import *
 import zipfile
+import edge_tts
+import asyncio
+import tempfile
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key'
@@ -42,7 +45,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(128), nullable=False)
     ip_address = db.Column(db.String(45), nullable=False)
 
-    generations_left = db.Column(db.Integer, default=3)  # Store the number of generations left
+    generations_left = db.Column(db.Integer, default=10)  # Store the number of generations left
     last_reset = db.Column(db.DateTime, default=datetime.utcnow)  # Track when the generation limit was last reset
 
 
@@ -54,7 +57,7 @@ def reset_weekly_limit(user):
 
     # If more than a week has passed since the last reset, reset the generation count
     if time_difference >= timedelta(weeks=1):
-        user.generations_left = 3  # Reset the counter to 10
+        user.generations_left = 10  # Reset the counter to 10
         user.last_reset = current_time  # Update the last reset time
         db.session.commit()
 
@@ -106,6 +109,79 @@ def get_client_ip(request):
         ip_address = request.remote_addr
     return ip_address
 
+def generate_voice_options():
+    """
+    Generate HTML options for all available Edge TTS voices.
+
+    Returns:
+        str: HTML string containing voice options.
+    """
+    async def get_voices():
+        voices = await edge_tts.list_voices()
+        return {f"{v['ShortName']} - {v['Locale']} ({v['Gender']})": v['ShortName'] for v in voices}
+
+    voices = asyncio.run(get_voices())
+
+    options_html = ""
+    for display_name, short_name in voices.items():
+        options_html += f'<option value="{short_name}">{display_name}</option>'
+    return options_html
+
+def generate_speech(user_story, selected_voice, rate=0, pitch=0):
+    """
+    Generate speech from the provided text and voice using Edge TTS.
+
+    Args:
+        user_story (str): The text to convert to speech.
+        selected_voice (str): The voice short name to use for TTS.
+        rate (int): The speech rate adjustment (default is 0).
+        pitch (int): The pitch adjustment (default is 0).
+
+    Returns:
+        None
+    """
+    try:
+        # Run the async text-to-speech function
+        audio_path = asyncio.run(text_to_speech(user_story, selected_voice, rate, pitch))
+
+        # Move the generated audio file to the desired location
+        output_path = os.path.join("static", "monologue_voice.mp3")
+        os.replace(audio_path, output_path)
+
+        print(f"Audio file saved as {output_path}")
+    except Exception as e:
+        print(f"Error: {e}")
+
+async def text_to_speech(text, voice, rate=0, pitch=0):
+    """
+    Convert text to speech using Edge TTS.
+
+    Args:
+        text (str): The text to convert.
+        voice (str): The short name of the selected voice.
+        rate (int): The speech rate adjustment (percentage).
+        pitch (int): The pitch adjustment (Hz).
+
+    Returns:
+        str: Path to the generated audio file.
+    """
+    if not text.strip():
+        raise ValueError("Text cannot be empty.")
+
+    if not voice:
+        raise ValueError("Voice must be specified.")
+
+    rate_str = f"{rate:+d}%"
+    pitch_str = f"{pitch:+d}Hz"
+
+    communicate = edge_tts.Communicate(text, voice, rate=rate_str, pitch=pitch_str)
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tmp_file:
+        tmp_path = tmp_file.name
+        await communicate.save(tmp_path)
+
+    return tmp_path
+
+
 @app.route("/")
 def main():
     user_is_logged_in = current_user.is_authenticated  # Check if the user is logged in
@@ -116,15 +192,17 @@ def main():
 def tool():
     video_path = None
     user = current_user
-    credits_left = get_user_credits()# Get the logged-in user
+    credits_left = get_user_credits()
 
     # Reset the weekly limit if necessary
     reset_weekly_limit(user)
 
+    voice_options = generate_voice_options()  # Generate voice options dynamically
+
     if request.method == 'POST':
         if user.generations_left <= 0:
             flash("You have used all your credits for this week. Please try again later.", "error")
-            return render_template('index.html', video_path=None)
+            return render_template('index.html', video_path=None, credits_left=credits_left, voice_options=voice_options)
 
         try:
             user_story = request.form['story']
@@ -133,7 +211,7 @@ def tool():
 
             if not titles:
                 print("No titles generated from story.")
-                return render_template('index.html', video_path=None)
+                return render_template('index.html', video_path=None, credits_left=credits_left, voice_options=voice_options)
 
             # Generate speech from the user's story
             generate_speech(user_story, selected_voice)
@@ -143,7 +221,7 @@ def tool():
 
             if not image_paths:
                 print("No images generated.")
-                return render_template('index.html', video_path=None)
+                return render_template('index.html', video_path=None, credits_left=credits_left, voice_options=voice_options)
 
             # Create the video
             video_file = os.path.join("static", "output_video.mp4")
@@ -153,23 +231,20 @@ def tool():
             for i in range(len(image_paths)):
                 os.remove("static/images/image_" + str(i + 1) + ".png")
 
-            # Define the target directory for videos
+            # Save the video with a unique name
             target_directory = "static/videos"
             base_filename = "output_video"
             extension = ".mp4"
             counter = 0
 
-            # Start with the first filename
             output_filename = f"{base_filename}{counter}{extension}"
             output_path = os.path.join(target_directory, output_filename)
 
-            # Loop until we find a filename that does not exist
             while os.path.exists(output_path):
                 counter += 1
                 output_filename = f"{base_filename}{counter}{extension}"
                 output_path = os.path.join(target_directory, output_filename)
 
-            # Copy the video to the target directory with the new filename
             shutil.copy(video_file, output_path)
             video_path = output_path
 
@@ -181,7 +256,8 @@ def tool():
             print("Error occurred:", str(e))
             video_path = None
 
-    return render_template('index.html', video_path=video_path, credits_left=credits_left)
+    return render_template('index.html', video_path=video_path, credits_left=credits_left, voice_options=voice_options)
+
 
 
 @app.route("/signup", methods=["GET", "POST"])
@@ -289,30 +365,6 @@ def generate_images(titles, output_dir):
     return image_paths
 
 # Function to generate speech from the user's story
-def generate_speech(user_story, selected_voice):
-    url = "https://api.play.ht/api/v2/tts/stream"
-    payload = {
-        "voice": selected_voice,
-        # Specify the voice
-        "output_format": "mp3",  # Specify the output format
-        "text": user_story  # The text to convert
-    }
-    headers = {
-        "accept": "audio/mpeg",
-        "content-type": "application/json",
-        "AUTHORIZATION": "aaa4d615220c4491a52daaff02576fa7",  # Your API key
-        "X-USER-ID": "Dh8IKiblhTgy08RI4IPV6uiovdb2"  # Your user ID
-    }
-    response = requests.post(url, json=payload, headers=headers)
-
-    # Poll for the audio file to be ready
-    if response.status_code == 200:
-        # Write the audio content to a file
-        with open('static/monologue_voice.mp3', 'wb') as f:
-            f.write(response.content)
-        print("Audio file saved as monologue_voice.mp3")
-    else:
-        print(f"Error: {response.status_code} - {response.text}")
 
 
 # Function to create a video from images and audio

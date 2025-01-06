@@ -80,21 +80,11 @@
                 <textarea id="story" name="story" rows="17" maxlength="1000" required class="w-full p-3 border border-pink-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"></textarea>
                 <p id="char-counter" class="text-sm text-gray-600 mt-2">0/1000 characters</p>
 
-                <label for="voice" class="block text-lg font-semibold mt-4">Choose a Voice:</label>
-                <select id="voice" name="voice" required class="w-full p-3 border border-pink-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500" onchange="playVoice()">
-                    <option value="s3://voice-cloning-zero-shot/baf1ef41-36b6-428c-9bdf-50ba54682bd8/original/manifest.json" data-audio-url="s3://voice-cloning-zero-shot/baf1ef41-36b6-428c-9bdf-50ba54682bd8/original/audio.wav">Original</option>
-                    <option value="s3://voice-cloning-zero-shot/d82d246c-148b-457f-9668-37b789520891/adolfosaad/manifest.json" data-audio-url="https://parrot-samples.s3.amazonaws.com/kettle/adolfo.wav">Adolfo</option>
-                    <option value="s3://voice-cloning-zero-shot/a59cb96d-bba8-4e24-81f2-e60b888a0275/charlottenarrativesaad/manifest.json" data-audio-url="https://parrot-samples.s3.amazonaws.com/kettle/charlotte+(narrative).wav">Charlotte</option>
-                    <option value="s3://voice-cloning-zero-shot/f6594c50-e59b-492c-bac2-047d57f8bdd8/susanadvertisingsaad/manifest.json" data-audio-url="https://parrot-samples.s3.amazonaws.com/kettle/susan+(advertising).wav">Susan</option>
-                    <option value="s3://voice-cloning-zero-shot/9fc626dc-f6df-4f47-a112-39461e8066aa/oliviaadvertisingsaad/manifest.json" data-audio-url="https://parrot-samples.s3.amazonaws.com/kettle/olivia+advertising.wav">Olivia</option>
-                    <option value="s3://voice-cloning-zero-shot/1afba232-fae0-4b69-9675-7f1aac69349f/delilahsaad/manifest.json" data-audio-url="https://peregrine-results.s3.amazonaws.com/UlI3kAAfgCOJNP2OMe.mp3">Delilah</option>
-                    <option value="s3://voice-cloning-zero-shot/9f1ee23a-9108-4538-90be-8e62efc195b6/charlessaad/manifest.json" data-audio-url="https://parrot-samples.s3.amazonaws.com/kettle/charles.wav">Charles</option>
-                </select>
+<label for="voice" class="block text-lg font-semibold mt-4">Choose a Voice:</label>
+<select id="voice" name="voice" required class="w-full p-3 border border-pink-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500">
+    {{ voice_options|safe }}
+</select>
 
-                <audio id="voicePlayer" controls style="display:none;">
-                    <source id="voiceSource" src="" type="audio/wav">
-                    Your browser does not support the audio element.
-                </audio>
 
                 <!-- Generation Credits Display -->
                 <div class="mt-4 flex items-center justify-between">
@@ -154,17 +144,6 @@
 
     function showLoadingSpinner() {
         document.getElementById('loading-overlay').style.display = 'flex';
-    }
-
-    function playVoice() {
-        const selectedVoice = document.getElementById('voice').selectedOptions[0];
-        const audioUrl = selectedVoice.getAttribute('data-audio-url');
-        const voicePlayer = document.getElementById('voicePlayer');
-        const voiceSource = document.getElementById('voiceSource');
-
-        voiceSource.src = audioUrl;
-        voicePlayer.load();
-        voicePlayer.play();
     }
 
     // Update the credit count dynamically
